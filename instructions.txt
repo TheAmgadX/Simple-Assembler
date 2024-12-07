@@ -1,0 +1,12 @@
+        ORG     100     / Origin of program is location 0x100
+        LDA     SUB     / Load subtrahend to AC
+        CMA             / Complement AC
+        INC             / Increment AC
+        ADD     MIN     / Add minuend to AC
+        STA     DIF     / Store difference
+        HLT             / Halt computer
+
+MIN,    DEC     83      / Minuend
+SUB,    DEC     -23     / Subtrahend
+DIF,    HEX     0       / Difference stored here
+        END             / End of symbolic program

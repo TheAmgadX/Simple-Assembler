@@ -75,7 +75,7 @@ DIF,    HEX     0       / Difference stored here
     106  :  0000000001010011
     107  :  1111111111101001
     108  :  0000000000000000
-
+    ---------------------------------------------------------
 # Second Test Case 
 
 ORG 0      /Origin of program is location 0

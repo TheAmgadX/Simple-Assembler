@@ -1,6 +1,7 @@
 # Assembler Document!  
 
 
+
 # The Project is a very Simple Assembler that translate the assembly code to machine code for the Basic Computer Instruction Set Architecture as per M.Mano's book "Computer System Architecture"
 
 # The Basic Computer has a 16-bit instruction divided into 12-bit address, 3-bit opcode and 1-bit for addressing mode.

@@ -151,16 +151,17 @@ func readCodeLinesFromFile() []string {
 	// read from file
 	reader := bufio.NewReader(file)
 	code := make([]string, 0)
+	defer file.Close() // Ensure the file is closed
 
 	for {
 		line, err := reader.ReadString('\n')
 
 		if err != nil {
-			// End of file, break the loop
+			// End of file so break the loop
 			if err == io.EOF {
 				break
 			}
-			fmt.Println("Error reading line:", err) // Log other errors
+			fmt.Println("Error reading line:", err) // for other errors
 			return nil
 		}
 
@@ -179,7 +180,6 @@ func readCodeLinesFromFile() []string {
 		}
 	}
 
-	defer file.Close() // Ensure the file is closed
 
 	return filteredCode
 }

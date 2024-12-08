@@ -77,17 +77,17 @@ There are only 4 pseudo-instructions supported by this assembler: `ORG`, `END`, 
     ---------------------------------------------------------
 # Second Test Case 
 
-    ORG 0      /Origin of program is location 0
-    LDA A     /Load operand from location A
-    ADD B     /Add operand from location B
-    STA C     /Store sum in location C
-    HLT       /Halt computer
+            ORG 0      /Origin of program is location 0
+            LDA A     /Load operand from location A
+            ADD B     /Add operand from location B
+            STA C     /Store sum in location C
+            HLT       /Halt computer
 
-    A, DEC 83     /Decimal operand
-    B, DEC -23    /Decimal operand
-    C, DEC 0      /Sum stored in location C
+    A,      DEC 83     /Decimal operand
+    B,      DEC -23    /Decimal operand
+    C,      DEC 0      /Sum stored in location C
 
-    END      /End of symbolic program
+            END      /End of symbolic program       
 
 # Output of second test case
 

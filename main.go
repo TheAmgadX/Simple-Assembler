@@ -170,18 +170,7 @@ func readCodeLinesFromFile() []string {
 			code = append(code, line)
 		}
 	}
-
-	// check there is no empty lines.
-	filteredCode := make([]string, 0, len(code))
-
-	for _, line := range code {
-		if line != "\n" && line != "" {
-			filteredCode = append(filteredCode, line)
-		}
-	}
-
-
-	return filteredCode
+	return code
 }
 
 // First Pass
@@ -190,7 +179,7 @@ func readCodeLinesFromFile() []string {
 	(address) symbols with their binary equivalent value
 */
 
-// CustomSplit splits a string based on a delimiter, ignoring repeated delimiters.
+// CustomSplit splits a string based on a delimiter ignoring repeated delimiters.
 func CustomSplit(input, delim string) []string {
 	// Replace multiple occurrences of the delimiter with a single one
 	normalized := input
@@ -201,7 +190,6 @@ func CustomSplit(input, delim string) []string {
 	// Trim leading and tailing delimiters
 	normalized = strings.Trim(normalized, delim)
 
-	// Split the normalized string
 	return strings.Split(normalized, delim)
 }
 
@@ -231,18 +219,39 @@ func ConvertLabelValue(line []string) (valDec int64, valBinary string, err error
 		// Convert positive decimal to binary and pad with leading zeros to make it 16 bits
 		valBinary = fmt.Sprintf("%016b", valDec)
 	} else {
-		// For negative numbers, use two's complement representation
-		// Two's complement: 65536 + decimalNumber
+		// For negative numbers use two's complement
+		// two's complement: 65536 + decimalNumber
 		twoComplement := (1 << 16) + valDec
 		valBinary = fmt.Sprintf("%016b", twoComplement)
 	}
 	return valDec, valBinary, err
 }
 
-func performFirstPass(code []string) (symbolTable map[string]label, LC int) {
+func incrementLC(numStr string) (string, error) {
+	// convert the string to int hex
+	result, err := strconv.ParseInt(numStr, 16, 0)
+	if err != nil {
+		fmt.Println(err)
+	}
 
+	// increment and return hex string
+	return fmt.Sprintf("%x", result+1), err
+}
+
+func decrementLC(numStr string) (string, error) {
+	// convert the string to int hex
+	result, err := strconv.ParseInt(numStr, 16, 0)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// increment and return hex string
+	return fmt.Sprintf("%x", result-1), err
+}
+
+func performFirstPass(code []string) (symbolTable map[string]label, LC string) {
 	symbolTable = make(map[string]label)
-	lc := 0
+	lc := ""
 
 	// we are in the first line so we want to store value of ORG in lc
 	if org := strings.Index(code[0], "ORG"); org != -1 {
@@ -250,17 +259,22 @@ func performFirstPass(code []string) (symbolTable map[string]label, LC int) {
 		// splite the code line into slice to get the value of the ORG instruction
 		lineComponents := CustomSplit(code[0], " ")
 
-		// get the value of ORG and store it in lc
-		val, err := strconv.ParseInt(lineComponents[1], 10, 32)
+		lc = lineComponents[1]
+		LC = lc
+
+		var err error
+
+		lc, err = decrementLC(lc) // to make it start from this number
 
 		if err != nil {
 			fmt.Println(err)
-			return nil, -1
 		}
 
-		lc = int(val)
-		LC = lc
-		lc-- // to make it start from this number
+	}
+
+	// end of the program.
+	if end := strings.Index(code[0], "END"); end != -1 {
+		return
 	}
 
 	for _, line := range code {
@@ -268,7 +282,13 @@ func performFirstPass(code []string) (symbolTable map[string]label, LC int) {
 
 		// we don't found label
 		if idx == -1 {
-			lc++
+			var err error
+
+			lc, err = incrementLC(lc)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 			continue
 		}
 
@@ -281,17 +301,23 @@ func performFirstPass(code []string) (symbolTable map[string]label, LC int) {
 		valDec, valBinary, err := ConvertLabelValue(lineComponents)
 
 		if err != nil {
-			return nil, -1
+			return nil, "-1"
 		}
 
 		lbl := label{
-			lc:            strconv.Itoa(lc),
+			lc:            lc,
 			valueInBinary: valBinary,
 			valueInDec:    int(valDec),
 		}
 		symbolTable[symbol] = lbl
 
-		lc++
+		var IncErr error
+
+		lc, IncErr = incrementLC(lc)
+
+		if IncErr != nil {
+			fmt.Println(IncErr)
+		}
 	}
 
 	return symbolTable, LC
@@ -357,7 +383,7 @@ func convertMRIToBinary(line []string, instSet map[string]instruction,
 }
 
 func performSecondPass(table map[string]label,
-	instructionsSet map[string]instruction, code []string, lc int) map[string]string {
+	instructionsSet map[string]instruction, code []string, lc string) map[string]string {
 
 	machineCode := make(map[string]string)
 
@@ -368,15 +394,28 @@ func performSecondPass(table map[string]label,
 			continue
 		}
 
+		// end of the program
+		if end := strings.Index(code[0], "END"); end != -1 {
+			return machineCode
+		}
+
 		// convert the line to code
 		lineCode := CustomSplit(line, " ")
 
-		LC := strconv.Itoa(lc)
+		LC := lc
 
 		keyForLabel := lineCode[0]
+
 		if isLabelLine(line) {
 			machineCode[LC] = table[keyForLabel[:len(keyForLabel)-1]].valueInBinary
-			lc++
+
+			var err error
+
+			lc, err = incrementLC(lc)
+
+			if err != nil {
+				fmt.Println(err)
+			}
 			continue
 		}
 
@@ -396,14 +435,45 @@ func performSecondPass(table map[string]label,
 			machineCode["Error"] = "Instruction Not Found"
 		}
 
-		lc++
+		var err error
+
+		lc, err = incrementLC(lc)
+
+		if err != nil {
+			fmt.Println(err)
+		}
 	}
 
 	return machineCode
 }
 
-func main() {
+func sortSliceByHex(slice []string) ([]string, error) {
+	sort.Slice(slice, func(i, j int) bool {
+		// Convert strings to integers (but dealing with it as hexadecimal values)
+		val1, err1 := strconv.ParseInt(slice[i], 16, 64)
+		val2, err2 := strconv.ParseInt(slice[j], 16, 64)
 
+		// Handle conversion errors
+		if err1 != nil || err2 != nil {
+			return false
+		}
+
+		// Compare the values
+		return val1 < val2
+	})
+
+	// Validate all entries
+	for _, s := range slice {
+		_, err := strconv.ParseInt(s, 16, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid hex value: %s", s)
+		}
+	}
+
+	return slice, nil
+}
+
+func main() {
 	code := readCodeLinesFromFile()
 
 	table, LC := performFirstPass(code)
@@ -419,12 +489,14 @@ func main() {
 
 	machineCodeMap := performSecondPass(table, instructionsSet, code, LC)
 
+	// to sort the machine code output.
 	keys := make([]string, 0, len(machineCodeMap))
 
 	for k := range machineCodeMap {
 		keys = append(keys, k)
 	}
-	sort.Strings(keys)
+
+	keys, _ = sortSliceByHex(keys)
 
 	fmt.Println("-------------------- Machine Code -----------------------")
 	for _, key := range keys {

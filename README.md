@@ -1,7 +1,8 @@
-# Assembler Document!  
-The Project is a very Simple Assembler that translate the assembly code to machine code for the Basic Computer Instruction Set Architecture as per M.Mano's book "Computer System Architecture"
+# Assembler Document!
 
-The Basic Computer has a 16-bit instruction divided into 12-bit address, 3-bit opcode and 1-bit for addressing mode.
+ The Project is a very Simple Assembler that translate the assembly code to machine code for the Basic Computer Instruction Set Architecture as per M.Mano's book "Computer System Architecture"
+
+ The Basic Computer has a 16-bit instruction divided into 12-bit address, 3-bit opcode and 1-bit for addressing mode.
 
 ##   Instructions set:
     - Memory Reference Instructions:
@@ -44,96 +45,130 @@ There are only 4 pseudo-instructions supported by this assembler: `ORG`, `END`, 
 
 # First Test Case
 
-            ORG     100     / Origin of program is location 0x100
-            LDA     SUB     / Load subtrahend to AC
-            CMA             / Complement AC
-            INC             / Increment AC
-            ADD     MIN     / Add minuend to AC
-            STA     DIF     / Store difference
-            HLT             / Halt computer
+        ORG     100     / Origin of program is location 0x100
+        LDA     SUB     / Load subtrahend to AC
+        CMA             / Complement AC
+        INC             / Increment AC
+        ADD     MIN     / Add minuend to AC
+        STA     DIF     / Store difference
+        HLT             / Halt computer
 
-    MIN,    DEC     83      / Minuend
-    SUB,    DEC     -23     / Subtrahend
-    DIF,    HEX     0       / Difference stored here
-            END             / End of symbolic program
+MIN,    DEC     83      / Minuend
+SUB,    DEC     -23     / Subtrahend
+DIF,    HEX     0       / Difference stored here
+        END             / End of symbolic program
 
 # Output of first test case
 
-    -------------------- Symbol Table -----------------------
-    MIN  :  106
-    SUB  :  107
-    DIF  :  108
-    ---------------------------------------------------------
-    -------------------- Machine Code -----------------------
-    100  :  0010000100000111
-    101  :  0111001000000000
-    102  :  0111000000100000
-    103  :  0001000100000110
-    104  :  0011000100001000
-    105  :  0111000000000001
-    106  :  0000000001010011
-    107  :  1111111111101001
-    108  :  0000000000000000
-    ---------------------------------------------------------
+-------------------- Symbol Table -----------------------
+MIN  :  106
+SUB  :  107
+DIF  :  108
+---------------------------------------------------------
+-------------------- Machine Code -----------------------
+100  :  0010000100000111
+101  :  0111001000000000
+102  :  0111000000100000
+103  :  0001000100000110
+104  :  0011000100001000
+105  :  0111000000000001
+106  :  0000000001010011
+107  :  1111111111101001
+108  :  0000000000000000
+---------------------------------------------------------
+
 # Second Test Case 
 
-            ORG 0      /Origin of program is location 0
-            LDA A     /Load operand from location A
-            ADD B     /Add operand from location B
-            STA C     /Store sum in location C
-            HLT       /Halt computer
+        ORG 0      /Origin of program is location 0
+        LDA A     /Load operand from location A
+        ADD B     /Add operand from location B
+        STA C     /Store sum in location C
+        HLT       /Halt computer
 
-    A,      DEC 83     /Decimal operand
-    B,      DEC -23    /Decimal operand
-    C,      DEC 0      /Sum stored in location C
+A,      DEC 83     /Decimal operand
+B,      DEC -23    /Decimal operand
+C,      DEC 0      /Sum stored in location C
 
-            END      /End of symbolic program       
+        END      /End of symbolic program       
 
 # Output of second test case
 
-    -------------------- Symbol Table -----------------------
-    C  :  6
-    A  :  4
-    B  :  5
-    ---------------------------------------------------------
-    -------------------- Machine Code -----------------------
-    0  :  0010000000000100
-    1  :  0001000000000101
-    2  :  0011000000000110
-    3  :  0111000000000001
-    4  :  0000000001010011
-    5  :  1111111111101001
-    6  :  0000000000000000
-    ---------------------------------------------------------
+-------------------- Symbol Table -----------------------
+C  :  6
+A  :  4
+B  :  5
+---------------------------------------------------------
+-------------------- Machine Code -----------------------
+0  :  0010000000000100
+1  :  0001000000000101
+2  :  0011000000000110
+3  :  0111000000000001
+4  :  0000000001010011
+5  :  1111111111101001
+6  :  0000000000000000
+---------------------------------------------------------
 
 # Third Test Case 
 
-            ORG 0      /Origin of program is location 0
-            LDA A  I   /Load operand from location A
-            ADD B     /Add operand from location B
-            STA C     /Store sum in location C
-            HLT       /Halt computer
+        ORG 0      /Origin of program is location 0
+        LDA A  I   /Load operand from location A
+        ADD B     /Add operand from location B
+        STA C     /Store sum in location C
+        HLT       /Halt computer
 
-    A,      DEC 83     /Decimal operand
-    B,      DEC -23    /Decimal operand
-    C,      DEC 0      /Sum stored in location C
+A,      DEC 83     /Decimal operand
+B,      DEC -23    /Decimal operand
+C,      DEC 0      /Sum stored in location C
 
-            END      /End of symbolic program    
-
+        END      /End of symbolic program       
 # Output of third test case
 
-    -------------------- Symbol Table -----------------------
-    A  :  4
-    B  :  5
-    C  :  6
-    ---------------------------------------------------------
-    -------------------- Machine Code -----------------------
-    0  :  1010000001010011
-    1  :  0001000000000101
-    2  :  0011000000000110
-    3  :  0111000000000001
-    4  :  0000000001010011
-    5  :  1111111111101001
-    6  :  0000000000000000
-    ---------------------------------------------------------  
-    
+-------------------- Symbol Table -----------------------
+A  :  4
+B  :  5
+C  :  6
+---------------------------------------------------------
+-------------------- Machine Code -----------------------
+0  :  1010000001010011
+1  :  0001000000000101
+2  :  0011000000000110
+3  :  0111000000000001
+4  :  0000000001010011
+5  :  1111111111101001
+6  :  0000000000000000
+---------------------------------------------------------
+
+
+# Fourth Test Case 
+
+                ORG     aaa     / Origin of program is location 0x100
+                LDA     SUB     / Load subtrahend to AC
+                CMA             / Complement AC
+                INC             / Increment AC
+                ADD     MIN      / Add minuend to AC
+                STA     DIF     / Store difference
+                HLT             / Halt computer
+
+        MIN,    DEC     83      / Minuend
+        SUB,    DEC     -23     / Subtrahend
+        DIF,    HEX     0       / Difference stored here
+                END             / End of symbolic program
+
+# Output of Fourth Test Case
+
+-------------------- Symbol Table -----------------------
+MIN  :  ab0
+SUB  :  ab1
+DIF  :  ab2
+---------------------------------------------------------
+-------------------- Machine Code -----------------------
+aaa  :  0010101010110001
+aab  :  0111001000000000
+aac  :  0111000000100000
+aad  :  0001101010110000
+aae  :  0011101010110010
+aaf  :  0111000000000001
+ab0  :  0000000001010011
+ab1  :  1111111111101001
+ab2  :  0000000000000000
+---------------------------------------------------------
